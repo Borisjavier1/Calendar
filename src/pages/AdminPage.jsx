@@ -259,35 +259,35 @@ export default function AdminPage() {
 
   if (!isAdmin) {
     return (
-      <div className="mx-auto max-w-md rounded-3xl border border-white/10 bg-slate-900/70 p-6">
-        <h1 className="mb-4 text-2xl font-black uppercase text-white">Admin Login</h1>
+      <div className="mx-auto max-w-md rounded-3xl border-4 border-yellow-400 bg-black/70 p-6 shadow-[0_0_20px_rgba(250,204,21,0.2)]">
+        <h1 className="mb-4 text-2xl font-black uppercase text-yellow-300">Admin Login</h1>
 
-        {authError && <p className="mb-3 rounded-xl bg-rose-900/30 p-3 text-sm text-rose-200">{authError}</p>}
+        {authError && <p className="mb-3 rounded-xl bg-red-900/40 p-3 text-sm text-yellow-200">{authError}</p>}
 
         <form onSubmit={loginHandler} className="space-y-4">
           <label className="block space-y-2">
-            <span className="text-sm text-slate-300">Email</span>
+            <span className="text-sm text-gray-300">Email</span>
             <input
               type="email"
               required
               value={credentials.email}
               onChange={(event) => setCredentials((prev) => ({ ...prev, email: event.target.value }))}
-              className="w-full rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+              className="w-full rounded-xl border border-yellow-400/30 bg-gray-900 px-3 py-2 text-gray-100"
             />
           </label>
 
           <label className="block space-y-2">
-            <span className="text-sm text-slate-300">Contrasena</span>
+            <span className="text-sm text-gray-300">Contrasena</span>
             <input
               type="password"
               required
               value={credentials.password}
               onChange={(event) => setCredentials((prev) => ({ ...prev, password: event.target.value }))}
-              className="w-full rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+              className="w-full rounded-xl border border-yellow-400/30 bg-gray-900 px-3 py-2 text-gray-100"
             />
           </label>
 
-          <button type="submit" className="w-full rounded-xl bg-rose-500 px-4 py-2 font-semibold text-white hover:bg-rose-400">
+          <button type="submit" className="w-full rounded-xl bg-yellow-400 px-4 py-2 font-bold text-black hover:bg-yellow-300 uppercase tracking-widest">
             Ingresar
           </button>
         </form>
@@ -303,19 +303,19 @@ export default function AdminPage() {
           <p className="text-sm text-slate-300">Sesion: {user.email}</p>
         </div>
 
-        <button onClick={logoutAdmin} className="rounded-xl bg-slate-700 px-4 py-2 text-sm text-white hover:bg-slate-600">
+        <button onClick={logoutAdmin} className="rounded-xl border-2 border-yellow-400 bg-transparent px-4 py-2 text-sm text-yellow-400 hover:bg-yellow-400/10 font-semibold uppercase">
           Cerrar sesion
         </button>
       </div>
 
-      <section className="space-y-4 rounded-2xl border border-white/10 bg-slate-900/60 p-5">
-        <h2 className="text-xl font-bold uppercase text-white">Competencias</h2>
+      <section className="space-y-4 rounded-2xl border-2 border-yellow-400/30 bg-gray-900/60 p-5 shadow-[0_0_15px_rgba(250,204,21,0.1)]">
+        <h2 className="text-xl font-bold uppercase text-yellow-300">Competencias</h2>
 
         {competitionStatus && (
-          <p className="rounded-xl bg-slate-800/80 p-3 text-sm text-slate-200">{competitionStatus}</p>
+          <p className="rounded-xl bg-gray-800 p-3 text-sm text-yellow-200">{competitionStatus}</p>
         )}
         {competitionsError && (
-          <p className="rounded-xl bg-rose-900/30 p-3 text-sm text-rose-200">{competitionsError}</p>
+          <p className="rounded-xl bg-red-900/40 p-3 text-sm text-yellow-200">{competitionsError}</p>
         )}
 
         <form onSubmit={submitCompetition} className="grid gap-3 md:grid-cols-4">
@@ -324,34 +324,34 @@ export default function AdminPage() {
             value={competitionForm.name}
             onChange={(event) => setCompetitionForm((current) => ({ ...current, name: event.target.value }))}
             placeholder="Nombre de competencia"
-            className="rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+            className="rounded-xl border border-yellow-400/30 bg-gray-900 px-3 py-2 text-gray-100 placeholder-gray-500"
           />
           <input
             value={competitionForm.city}
             onChange={(event) => setCompetitionForm((current) => ({ ...current, city: event.target.value }))}
             placeholder="Ciudad"
-            className="rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+            className="rounded-xl border border-yellow-400/30 bg-gray-900 px-3 py-2 text-gray-100 placeholder-gray-500"
           />
           <input
             type="url"
             value={competitionForm.imageUrl}
             onChange={(event) => setCompetitionForm((current) => ({ ...current, imageUrl: event.target.value }))}
             placeholder="URL de imagen (opcional)"
-            className="rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+            className="rounded-xl border border-yellow-400/30 bg-gray-900 px-3 py-2 text-gray-100 placeholder-gray-500"
           />
           <input
             type="url"
             value={competitionForm.instagramUrl}
             onChange={(event) => setCompetitionForm((current) => ({ ...current, instagramUrl: event.target.value }))}
             placeholder="URL Instagram (opcional)"
-            className="rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+            className="rounded-xl border border-yellow-400/30 bg-gray-900 px-3 py-2 text-gray-100 placeholder-gray-500"
           />
 
           <div className="md:col-span-3 flex flex-wrap gap-2">
             <button
               type="submit"
               disabled={isSavingCompetition}
-              className="rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-400 disabled:bg-rose-400/50"
+              className="rounded-xl bg-yellow-400 px-4 py-2 text-sm font-bold text-black hover:bg-yellow-300 disabled:bg-yellow-400/50 uppercase tracking-widest"
             >
               {competitionEditTarget ? 'Actualizar competencia' : 'Crear competencia'}
             </button>
