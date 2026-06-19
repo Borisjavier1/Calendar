@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == "boriswork110@gmail.com";
+    }
+
+    function organizerDoc() {
+      return get(/databases/$(database)/documents/organizers/$(request.auth.uid));
+    }
+
+    function organizerDocExists() {
+      return exists(/databases/$(database)/documents/organizers/$(request.auth.uid));
+    }
+
+    function isOrganizer() {
+      return isSignedIn()
+        && organizerDocExists()
+        && organizerDoc().data.isActive == true;
+    }
+
+    function organizerCompetitionId() {
+      return organizerDoc().data.competitionId;
+    }
+
+    function organizerCompetitionName() {
+      return organizerDoc().data.competitionName;
+    }
+
+    match /events/{eventId} {
+      allow read: if true;
+      allow create: if isAdmin()
+        || (isOrganizer()
+          && request.resource.data.competitionId == organizerCompetitionId()
+          && request.resource.data.competitionName == organizerCompetitionName()
+          && request.resource.data.type == organizerCompetitionName());
+      allow update: if isAdmin()
+        || (isOrganizer()
+          && resource.data.competitionId == organizerCompetitionId()
+          && request.resource.data.competitionId == organizerCompetitionId()
+          && request.resource.data.competitionName == organizerCompetitionName()
+          && request.resource.data.type == organizerCompetitionName());
+      allow delete: if isAdmin()
+        || (isOrganizer() && resource.data.competitionId == organizerCompetitionId());
+    }
+
+    match /competitions/{competitionId} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (isOrganizer()
+          && competitionId == organizerCompetitionId()
+          && request.resource.data.keys().hasOnly(['name', 'city', 'imageUrl', 'instagramUrl', 'createdAt'])
+          && request.resource.data.name == resource.data.name
+          && request.resource.data.city == resource.data.city
+          && request.resource.data.imageUrl == resource.data.imageUrl
+          && request.resource.data.createdAt == resource.data.createdAt);
+    }
+
+    match /organizers/{organizerId} {
+      allow read: if isAdmin() || (isSignedIn() && request.auth.uid == organizerId);
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}
