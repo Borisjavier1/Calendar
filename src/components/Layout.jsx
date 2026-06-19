@@ -9,28 +9,37 @@ const navItems = [
 
 export default function Layout() {
   return (
-    <div className="min-h-screen text-slate-100 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('/bg-flag.svg')] bg-cover bg-center opacity-15" />
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-900/80 to-slate-950/95" />
+    <div className="min-h-screen text-gray-100 relative overflow-hidden">
+      {/* Bandera de Costa Rica como fondo sutil */}
+      <div className="absolute inset-0">
+        <div className="flex h-full w-full">
+          <div className="w-1/5 bg-blue-700/10" />
+          <div className="w-1/5 bg-white/5" />
+          <div className="w-1/5 bg-red-700/10" />
+          <div className="w-1/5 bg-white/5" />
+          <div className="w-1/5 bg-blue-700/10" />
+        </div>
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-gray-950/80 to-black/95" />
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6 lg:px-8">
-        <header className="mb-8 rounded-2xl border border-white/10 bg-slate-900/60 px-5 py-4 backdrop-blur-md shadow-[0_0_40px_rgba(15,23,42,0.65)]">
+        <header className="mb-8 rounded-2xl border-2 border-yellow-400/30 bg-gray-900/60 px-5 py-4 backdrop-blur-md shadow-[0_0_25px_rgba(250,204,21,0.1)]">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <Link to="/" className="text-lg font-black tracking-wider text-white">
-              Batallas Freestyle CR
+            <Link to="/" className="text-lg font-black tracking-widest text-yellow-300 uppercase drop-shadow-lg">
+              🎤 Batallas Freestyle CR
             </Link>
 
-            <nav className="flex flex-wrap gap-2 text-sm font-medium">
+            <nav className="flex flex-wrap gap-2 text-sm font-bold uppercase">
               {navItems.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   className={({ isActive }) =>
                     [
-                      'rounded-full px-4 py-2 transition',
+                      'rounded-full px-4 py-2 transition tracking-widest',
                       isActive
-                        ? 'bg-rose-500/80 text-white shadow-[0_0_18px_rgba(244,63,94,0.45)]'
-                        : 'bg-slate-800/70 text-slate-200 hover:bg-slate-700/70',
+                        ? 'bg-yellow-400 text-black shadow-[0_0_15px_rgba(250,204,21,0.3)]'
+                        : 'bg-gray-800/70 text-gray-300 hover:bg-gray-700/70 border border-yellow-400/20',
                     ].join(' ')
                   }
                 >

@@ -29,8 +29,8 @@ export default function EventDetailPage() {
   }, [id])
 
   if (isLoading) return <LoaderState message="Cargando evento..." />
-  if (error) return <p className="rounded-xl bg-rose-900/30 p-4 text-rose-200">{error}</p>
-  if (!event) return <p className="rounded-xl bg-slate-900/65 p-4 text-slate-300">Evento no encontrado.</p>
+  if (error) return <p className="rounded-xl bg-red-900/40 p-4 text-yellow-200">{error}</p>
+  if (!event) return <p className="rounded-xl bg-gray-900/65 p-4 text-gray-300">Evento no encontrado.</p>
 
   const competitionLabel = event.competitionName || event.type || 'Competencia'
 
@@ -67,7 +67,7 @@ export default function EventDetailPage() {
           </p>
         )}
 
-        <p className="leading-relaxed text-slate-300">{event.description}</p>
+        <p className="leading-relaxed text-gray-300">{event.description}</p>
       </div>
     </article>
   )
