@@ -5,7 +5,7 @@ import { formatLocation } from '../utils/location'
 
 export default function EventCard({ event }) {
   const competitionLabel = event.competitionName || event.type || 'Competencia'
-  const typeColor = getCompetitionColor(competitionLabel)
+  const typeColor = event.color || getCompetitionColor(event.competitionId, true)
 
   return (
     <article className="overflow-hidden rounded-2xl border-2 border-yellow-400/30 bg-gray-900/70 shadow-[0_0_20px_rgba(250,204,21,0.1)] transition hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(250,204,21,0.2)]">

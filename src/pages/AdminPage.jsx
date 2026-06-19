@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import EventForm from '../components/EventForm'
+import ColorPicker from '../components/ColorPicker'
 import LoaderState from '../components/LoaderState'
 import { useAuth } from '../hooks/useAuth'
 import { useCompetitions } from '../hooks/useCompetitions'
@@ -37,6 +38,7 @@ const initialCompetitionForm = {
   name: '',
   city: '',
   imageUrl: '',
+  color: '#ef4444',
   instagramUrl: '',
 }
 
@@ -163,6 +165,7 @@ export default function AdminPage() {
       name: competition.name || '',
       city: competition.city || '',
       imageUrl: competition.imageUrl || '',
+      color: competition.color || '#ef4444',
       instagramUrl: competition.instagramUrl || '',
     })
   }
@@ -300,7 +303,7 @@ export default function AdminPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black uppercase text-white">Panel Admin</h1>
-          <p className="text-sm text-gray-300">Sesion: {user.email}</p>
+          <p className="text-sm text-gray-300 font-semibold">Sesion: {user.email}</p>
         </div>
 
         <button onClick={logoutAdmin} className="rounded-xl border-2 border-yellow-400 bg-transparent px-4 py-2 text-sm text-yellow-400 hover:bg-yellow-400/10 font-semibold uppercase">
@@ -347,7 +350,15 @@ export default function AdminPage() {
             className="rounded-xl border border-yellow-400/30 bg-gray-900 px-3 py-2 text-gray-100 placeholder-gray-500"
           />
 
-          <div className="md:col-span-3 flex flex-wrap gap-2">
+          <div className="md:col-span-4">
+            <ColorPicker 
+              value={competitionForm.color} 
+              onChange={(color) => setCompetitionForm((current) => ({ ...current, color }))}
+              label="Color del evento"
+            />
+          </div>
+
+          <div className="md:col-span-4 flex flex-wrap gap-2">
             <button
               type="submit"
               disabled={isSavingCompetition}
@@ -375,6 +386,7 @@ export default function AdminPage() {
                   <th className="px-4 py-3">Ciudad</th>
                   <th className="px-4 py-3">Imagen</th>
                   <th className="px-4 py-3">Instagram</th>
+                  <th className="px-4 py-3">Color</th>
                   <th className="px-4 py-3">Acciones</th>
                 </tr>
               </thead>
@@ -400,6 +412,15 @@ export default function AdminPage() {
                       ) : (
                         <span className="text-gray-400">Sin link</span>
                       )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="h-6 w-6 rounded-full border border-gray-500" 
+                          style={{ backgroundColor: competition.color || '#ef4444' }}
+                        />
+                        <span className="text-xs text-gray-400">{competition.color || '#ef4444'}</span>
+                      </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-2">

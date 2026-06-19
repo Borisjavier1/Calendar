@@ -13,6 +13,7 @@ import {
   writeBatch,
 } from 'firebase/firestore'
 import { db } from './firebase'
+import { setCompetitionColorMap } from '../utils/constants'
 
 const competitionsCollection = collection(db, 'competitions')
 const eventsCollection = collection(db, 'events')
@@ -32,6 +33,7 @@ export const createCompetition = async (payload) => {
     name: payload.name,
     city: payload.city,
     imageUrl: payload.imageUrl,
+    color: payload.color || '#ef4444', // Rojo por defecto
     instagramUrl: payload.instagramUrl || '',
     createdAt: serverTimestamp(),
   }
@@ -45,6 +47,7 @@ export const updateCompetition = async (competitionId, payload) => {
     name: payload.name,
     city: payload.city,
     imageUrl: payload.imageUrl,
+    color: payload.color,
     instagramUrl: payload.instagramUrl || '',
   })
 
@@ -62,6 +65,7 @@ export const updateCompetition = async (competitionId, payload) => {
       competitionName: payload.name,
       type: payload.name,
       imageUrl: payload.imageUrl || '',
+      color: payload.color,
       competitionInstagramUrl: payload.instagramUrl || '',
     })
     batchCount += 1
@@ -78,7 +82,7 @@ export const updateCompetition = async (competitionId, payload) => {
   }
 }
 
-export const updateCompetitionInstagram = async (competitionId, instagramUrl) => {
+export const deleteCompetition = async (competitionId) => {
   await updateDoc(doc(db, 'competitions', competitionId), {
     instagramUrl: instagramUrl || '',
   })
@@ -109,7 +113,36 @@ export const updateCompetitionInstagram = async (competitionId, instagramUrl) =>
   }
 }
 
-export const deleteCompetition = async (competitionId) => {
+export const updateCompetitionColor = async (competitionId, color) => {
+  await updateDoc(doc(db, 'competitions', competitionId), {
+    color,
+  })
+
+  const linkedEventsQuery = query(eventsCollection, where('competitionId', '==', competitionId))
+  const linkedEventsSnapshot = await getDocs(linkedEventsQuery)
+
+  if (linkedEventsSnapshot.empty) return
+
+  let batch = writeBatch(db)
+  let batchCount = 0
+
+  for (const eventDoc of linkedEventsSnapshot.docs) {
+    batch.update(eventDoc.ref, {
+      color,
+    })
+    batchCount += 1
+
+    if (batchCount === 450) {
+      await batch.commit()
+      batch = writeBatch(db)
+      batchCount = 0
+    }
+  }
+
+  if (batchCount > 0) {
+    await batch.commit()
+  }
+}
   // Primero elimina todos los eventos asociados a esta competencia
   const linkedEventsQuery = query(eventsCollection, where('competitionId', '==', competitionId))
   const linkedEventsSnapshot = await getDocs(linkedEventsQuery)
@@ -144,7 +177,16 @@ export const subscribeToCompetitions = ({ onData, onError }) => {
   return onSnapshot(
     competitionsQuery,
     (snapshot) => {
-      onData(snapshot.docs.map(mapDocToCompetition))
+      const competitions = snapshot.docs.map(mapDocToCompetition)
+      // Carga el mapeo de colores por ID
+      const colorMap = {}
+      competitions.forEach((comp) => {
+        if (comp.color) {
+          colorMap[comp.id] = comp.color
+        }
+      })
+      setCompetitionColorMap(colorMap)
+      onData(competitions)
     },
     onError,
   )
