@@ -175,10 +175,10 @@ export default function AdminPage() {
   const deleteCompetitionHandler = async (competitionId) => {
     const linkedEvents = events.filter((event) => event.competitionId === competitionId)
     const eventMessage = linkedEvents.length > 0 
-      ? ` (Se eliminarán también ${linkedEvents.length} evento${linkedEvents.length > 1 ? 's' : ''} asociado${linkedEvents.length > 1 ? 's' : ''})` 
+      ? ` (Se eliminarÃ¡n tambiÃ©n ${linkedEvents.length} evento${linkedEvents.length > 1 ? 's' : ''} asociado${linkedEvents.length > 1 ? 's' : ''})` 
       : ''
     
-    const confirmed = window.confirm(`Se eliminará esta competencia${eventMessage}. ¿Deseas continuar?`)
+    const confirmed = window.confirm(`Se eliminarÃ¡ esta competencia${eventMessage}. Â¿Deseas continuar?`)
     if (!confirmed) return
 
     try {
@@ -235,7 +235,7 @@ export default function AdminPage() {
   }
 
   const deleteOrganizerHandler = async (organizerId, organizerUsername) => {
-    const confirmed = window.confirm(`Eliminar organizador "${organizerUsername}"? Esta acción no se puede deshacer.`)
+    const confirmed = window.confirm(`Eliminar organizador "${organizerUsername}"? Esta acciÃ³n no se puede deshacer.`)
     if (!confirmed) return
 
     try {
@@ -300,7 +300,7 @@ export default function AdminPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black uppercase text-white">Panel Admin</h1>
-          <p className="text-sm text-slate-300">Sesion: {user.email}</p>
+          <p className="text-sm text-gray-300">Sesion: {user.email}</p>
         </div>
 
         <button onClick={logoutAdmin} className="rounded-xl border-2 border-yellow-400 bg-transparent px-4 py-2 text-sm text-yellow-400 hover:bg-yellow-400/10 font-semibold uppercase">
@@ -357,7 +357,7 @@ export default function AdminPage() {
             </button>
 
             {competitionEditTarget && (
-              <button type="button" onClick={cancelEditCompetition} className="rounded-xl bg-slate-700 px-4 py-2 text-sm text-white hover:bg-slate-600">
+              <button type="button" onClick={cancelEditCompetition} className="rounded-xl border-2 border-yellow-400 bg-transparent px-4 py-2 text-sm text-yellow-400 hover:bg-yellow-400/10 font-semibold uppercase">
                 Cancelar edicion
               </button>
             )}
@@ -367,9 +367,9 @@ export default function AdminPage() {
         {isLoadingCompetitions ? (
           <LoaderState message="Cargando competencias..." />
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-white/10">
-            <table className="min-w-full text-left text-sm text-slate-200">
-              <thead className="bg-slate-800/70 text-xs uppercase tracking-wide text-slate-300">
+          <div className="overflow-x-auto rounded-2xl border border-yellow-400/30">
+            <table className="min-w-full text-left text-sm text-gray-200">
+              <thead className="bg-gray-800/70 text-xs uppercase tracking-wide text-gray-300">
                 <tr>
                   <th className="px-4 py-3">Nombre</th>
                   <th className="px-4 py-3">Ciudad</th>
@@ -380,7 +380,7 @@ export default function AdminPage() {
               </thead>
               <tbody>
                 {competitions.map((competition) => (
-                  <tr key={competition.id} className="border-t border-white/5">
+                  <tr key={competition.id} className="border-t border-yellow-400/10">
                     <td className="px-4 py-3">{competition.name}</td>
                     <td className="px-4 py-3">{competition.city || '-'}</td>
                     <td className="px-4 py-3">
@@ -389,7 +389,7 @@ export default function AdminPage() {
                           Ver imagen
                         </a>
                       ) : (
-                        <span className="text-slate-400">Sin imagen</span>
+                        <span className="text-gray-400">Sin imagen</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -398,20 +398,20 @@ export default function AdminPage() {
                           Ver instagram
                         </a>
                       ) : (
-                        <span className="text-slate-400">Sin link</span>
+                        <span className="text-gray-400">Sin link</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-2">
                         <button
                           onClick={() => startEditCompetition(competition)}
-                          className="rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-sky-500"
+                          className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-500"
                         >
                           Editar
                         </button>
                         <button
                           onClick={() => deleteCompetitionHandler(competition.id)}
-                          className="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-500"
+                          className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-500"
                         >
                           Eliminar
                         </button>
@@ -425,14 +425,14 @@ export default function AdminPage() {
         )}
       </section>
 
-      <section className="space-y-4 rounded-2xl border border-white/10 bg-slate-900/60 p-5">
-        <h2 className="text-xl font-bold uppercase text-white">Organizadores</h2>
+      <section className="space-y-4 rounded-2xl border-2 border-yellow-400/30 bg-gray-900/60 p-5 shadow-[0_0_15px_rgba(250,204,21,0.1)]">
+        <h2 className="text-xl font-bold uppercase text-yellow-300">Organizadores</h2>
 
         {organizerStatus && (
-          <p className="rounded-xl bg-slate-800/80 p-3 text-sm text-slate-200">{organizerStatus}</p>
+          <p className="rounded-xl bg-gray-800 p-3 text-sm text-yellow-200">{organizerStatus}</p>
         )}
         {organizersError && (
-          <p className="rounded-xl bg-rose-900/30 p-3 text-sm text-rose-200">{organizersError}</p>
+          <p className="rounded-xl bg-red-900/40 p-3 text-sm text-yellow-200">{organizersError}</p>
         )}
 
         <form onSubmit={createOrganizerHandler} className="grid gap-3 md:grid-cols-4">
@@ -446,7 +446,7 @@ export default function AdminPage() {
               }))
             }
             placeholder="Usuario (una palabra)"
-            className="rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+            className="rounded-xl border border-yellow-400/30 bg-gray-900 px-3 py-2 text-gray-100 placeholder-gray-500"
           />
 
           <div className="flex gap-2 md:col-span-2">
@@ -461,12 +461,12 @@ export default function AdminPage() {
                 }))
               }
               placeholder="Clave temporal"
-              className="flex-1 rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+              className="flex-1 rounded-xl border border-yellow-400/30 bg-gray-900 px-3 py-2 text-gray-100 placeholder-gray-500"
             />
             <button
               type="button"
               onClick={suggestPassword}
-              className="rounded-xl bg-slate-700 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-600"
+              className="rounded-xl bg-gray-700 px-3 py-2 text-xs font-semibold text-white hover:bg-gray-600"
             >
               Generar
             </button>
@@ -481,7 +481,7 @@ export default function AdminPage() {
                 competitionId: event.target.value,
               }))
             }
-            className="rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+            className="rounded-xl border border-yellow-400/30 bg-gray-900 px-3 py-2 text-gray-100 placeholder-gray-500"
           >
             <option value="">Asignar competencia...</option>
             {competitions.map((competition) => (
@@ -495,7 +495,7 @@ export default function AdminPage() {
             <button
               type="submit"
               disabled={isSavingOrganizer}
-              className="rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-400 disabled:bg-rose-400/50"
+              className="rounded-xl bg-yellow-400 px-4 py-2 text-sm font-bold text-black hover:bg-yellow-300 disabled:bg-yellow-400/50 uppercase tracking-widest"
             >
               {isSavingOrganizer ? 'Creando organizador...' : 'Crear organizador'}
             </button>
@@ -505,9 +505,9 @@ export default function AdminPage() {
         {isLoadingOrganizers ? (
           <LoaderState message="Cargando organizadores..." />
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-white/10">
-            <table className="min-w-full text-left text-sm text-slate-200">
-              <thead className="bg-slate-800/70 text-xs uppercase tracking-wide text-slate-300">
+          <div className="overflow-x-auto rounded-2xl border border-yellow-400/30">
+            <table className="min-w-full text-left text-sm text-gray-200">
+              <thead className="bg-gray-800/70 text-xs uppercase tracking-wide text-gray-300">
                 <tr>
                   <th className="px-4 py-3">Usuario</th>
                   <th className="px-4 py-3">Correo tecnico</th>
@@ -518,7 +518,7 @@ export default function AdminPage() {
               </thead>
               <tbody>
                 {organizers.map((organizer) => (
-                  <tr key={organizer.id} className="border-t border-white/5">
+                  <tr key={organizer.id} className="border-t border-yellow-400/10">
                     <td className="px-4 py-3">{organizer.username}</td>
                     <td className="px-4 py-3">{organizer.email}</td>
                     <td className="px-4 py-3">{organizer.competitionName || '-'}</td>
@@ -526,7 +526,7 @@ export default function AdminPage() {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => deleteOrganizerHandler(organizer.id, organizer.username)}
-                        className="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-500"
+                        className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-yellow-400"
                       >
                         Eliminar
                       </button>
@@ -539,15 +539,15 @@ export default function AdminPage() {
         )}
       </section>
 
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold uppercase text-white">Eventos</h2>
+      <section className="space-y-4 rounded-2xl border-2 border-yellow-400/30 bg-gray-900/60 p-5 shadow-[0_0_15px_rgba(250,204,21,0.1)]">
+        <h2 className="text-xl font-bold uppercase text-yellow-300">Eventos</h2>
 
         {isLoading && <LoaderState />}
-        {!isLoading && error && <p className="rounded-xl bg-rose-900/30 p-4 text-rose-200">{error}</p>}
+        {!isLoading && error && <p className="rounded-xl bg-red-900/40 p-4 text-yellow-200">{error}</p>}
 
-        <div className="overflow-x-auto rounded-2xl border border-white/10 bg-slate-900/60">
-          <table className="min-w-full text-left text-sm text-slate-200">
-            <thead className="bg-slate-800/70 text-xs uppercase tracking-wide text-slate-300">
+        <div className="overflow-x-auto rounded-2xl border-2 border-yellow-400/30 bg-gray-900/50">
+          <table className="min-w-full text-left text-sm text-gray-200">
+            <thead className="bg-gray-800/70 text-xs uppercase tracking-wide text-yellow-300">
               <tr>
                 <th className="px-4 py-3">Nombre</th>
                 <th className="px-4 py-3">Fecha</th>
@@ -558,7 +558,7 @@ export default function AdminPage() {
             </thead>
             <tbody>
               {events.map((event) => (
-                <tr key={event.id} className="border-t border-white/5">
+                <tr key={event.id} className="border-t border-yellow-400/10">
                   <td className="px-4 py-3">{event.name}</td>
                   <td className="px-4 py-3">{formatEventDate(event.date, event.hasCustomTime)}</td>
                   <td className="px-4 py-3">{formatLocation(event.place, event.city)}</td>
@@ -567,13 +567,13 @@ export default function AdminPage() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => setEventEditTarget(event)}
-                        className="rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-sky-500"
+                        className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-500"
                       >
                         Editar
                       </button>
                       <button
                         onClick={() => deleteEventHandler(event.id)}
-                        className="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-500"
+                        className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-500"
                       >
                         Eliminar
                       </button>
@@ -586,8 +586,8 @@ export default function AdminPage() {
         </div>
 
         {eventEditTarget && (
-          <section className="space-y-4 rounded-2xl border border-white/10 bg-slate-900/60 p-5">
-            <h3 className="text-xl font-bold uppercase text-white">Editar evento</h3>
+          <section className="space-y-4 rounded-2xl border-2 border-yellow-400/30 bg-gray-900/60 p-5 shadow-[0_0_15px_rgba(250,204,21,0.1)]">
+            <h3 className="text-xl font-bold uppercase text-yellow-300">Editar evento</h3>
             <EventForm
               key={eventEditTarget.id}
               defaultValues={eventEditDefaults}
@@ -595,7 +595,7 @@ export default function AdminPage() {
               isSubmitting={isSavingEventEdit}
               competitions={competitions}
             />
-            <button onClick={() => setEventEditTarget(null)} className="rounded-xl bg-slate-700 px-4 py-2 text-white hover:bg-slate-600">
+            <button onClick={() => setEventEditTarget(null)} className="rounded-xl border-2 border-yellow-400 bg-transparent px-4 py-2 text-yellow-400 hover:bg-yellow-400/10 font-semibold uppercase tracking-widest">
               Cancelar edicion
             </button>
           </section>

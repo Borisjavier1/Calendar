@@ -229,34 +229,34 @@ export default function OrganizerPage() {
 
   if (!isOrganizer) {
     return (
-      <div className="mx-auto max-w-md rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+      <div className="mx-auto max-w-md rounded-3xl border border-yellow-400/30 bg-gray-900/70 p-6">
         <h1 className="mb-4 text-2xl font-black uppercase text-white">Panel Organizador</h1>
 
         {authError && <p className="mb-3 rounded-xl bg-rose-900/30 p-3 text-sm text-rose-200">{authError}</p>}
 
         <form onSubmit={loginHandler} className="space-y-4">
           <label className="block space-y-2">
-            <span className="text-sm text-slate-300">Usuario o correo</span>
+            <span className="text-sm text-gray-300">Usuario o correo</span>
             <input
               required
               value={credentials.identifier}
               onChange={(event) => setCredentials((prev) => ({ ...prev, identifier: event.target.value }))}
-              className="w-full rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+              className="w-full rounded-xl border border-yellow-400/30 bg-gray-800 px-3 py-2 text-gray-100"
             />
           </label>
 
           <label className="block space-y-2">
-            <span className="text-sm text-slate-300">Clave</span>
+            <span className="text-sm text-gray-300">Clave</span>
             <input
               type="password"
               required
               value={credentials.password}
               onChange={(event) => setCredentials((prev) => ({ ...prev, password: event.target.value }))}
-              className="w-full rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+              className="w-full rounded-xl border border-yellow-400/30 bg-gray-800 px-3 py-2 text-gray-100"
             />
           </label>
 
-          <button type="submit" className="w-full rounded-xl bg-rose-500 px-4 py-2 font-semibold text-white hover:bg-rose-400">
+          <button type="submit" className="w-full rounded-xl bg-yellow-400 px-4 py-2 font-semibold text-white hover:bg-yellow-300">
             Ingresar
           </button>
         </form>
@@ -269,11 +269,11 @@ export default function OrganizerPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black uppercase text-white">Panel Organizador</h1>
-          <p className="text-sm text-slate-300">Usuario: {user?.email}</p>
-          <p className="text-sm text-slate-300">Competencia: {organizerProfile.competitionName}</p>
+          <p className="text-sm text-gray-300">Usuario: {user?.email}</p>
+          <p className="text-sm text-gray-300">Competencia: {organizerProfile.competitionName}</p>
         </div>
 
-        <button onClick={logoutAdmin} className="rounded-xl bg-slate-700 px-4 py-2 text-sm text-white hover:bg-slate-600">
+        <button onClick={logoutAdmin} className="rounded-xl bg-gray-700 px-4 py-2 text-sm text-white hover:bg-slate-600">
           Cerrar sesion
         </button>
       </div>
@@ -284,7 +284,7 @@ export default function OrganizerPage() {
         </p>
       )}
 
-      <section className="space-y-4 rounded-2xl border border-white/10 bg-slate-900/60 p-5">
+      <section className="space-y-4 rounded-2xl border border-yellow-400/30 bg-gray-900/60 p-5">
         <h2 className="text-xl font-bold uppercase text-white">Cambiar clave</h2>
 
         {passwordStatus.message && (
@@ -300,7 +300,7 @@ export default function OrganizerPage() {
             value={passwordForm.currentPassword}
             onChange={(event) => setPasswordForm((current) => ({ ...current, currentPassword: event.target.value }))}
             placeholder="Clave actual"
-            className="rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+            className="rounded-xl border border-yellow-400/30 bg-gray-800 px-3 py-2 text-gray-100"
           />
 
           <input
@@ -310,7 +310,7 @@ export default function OrganizerPage() {
             value={passwordForm.newPassword}
             onChange={(event) => setPasswordForm((current) => ({ ...current, newPassword: event.target.value }))}
             placeholder="Nueva clave"
-            className="rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+            className="rounded-xl border border-yellow-400/30 bg-gray-800 px-3 py-2 text-gray-100"
           />
 
           <input
@@ -320,14 +320,14 @@ export default function OrganizerPage() {
             value={passwordForm.confirmPassword}
             onChange={(event) => setPasswordForm((current) => ({ ...current, confirmPassword: event.target.value }))}
             placeholder="Confirmar nueva clave"
-            className="rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+            className="rounded-xl border border-yellow-400/30 bg-gray-800 px-3 py-2 text-gray-100"
           />
 
           <div className="md:col-span-3">
             <button
               type="submit"
               disabled={isChangingPassword}
-              className="rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-400 disabled:bg-rose-400/50"
+              className="rounded-xl bg-yellow-400 px-4 py-2 text-sm font-semibold text-white hover:bg-yellow-300 disabled:bg-yellow-300/50"
             >
               {isChangingPassword ? 'Actualizando clave...' : 'Actualizar clave'}
             </button>
@@ -335,7 +335,7 @@ export default function OrganizerPage() {
         </form>
       </section>
 
-      <section className="space-y-4 rounded-2xl border border-white/10 bg-slate-900/60 p-5">
+      <section className="space-y-4 rounded-2xl border border-yellow-400/30 bg-gray-900/60 p-5">
         <h2 className="text-xl font-bold uppercase text-white">Instagram de competencia</h2>
 
         {instagramStatus.message && (
@@ -350,33 +350,33 @@ export default function OrganizerPage() {
             value={instagramUrlInput}
             onChange={(event) => setInstagramUrlInput(event.target.value)}
             placeholder="https://instagram.com/tu_perfil"
-            className="w-full rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
+            className="w-full rounded-xl border border-yellow-400/30 bg-gray-800 px-3 py-2 text-gray-100"
           />
 
           <div className="flex gap-2">
             <button
               type="submit"
               disabled={isSavingInstagram}
-              className="rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-400 disabled:bg-rose-400/50"
+              className="rounded-xl bg-yellow-400 px-4 py-2 text-sm font-semibold text-white hover:bg-yellow-300 disabled:bg-yellow-300/50"
             >
               {isSavingInstagram ? 'Guardando...' : 'Guardar instagram'}
             </button>
             <button
               type="button"
               onClick={syncInstagramInput}
-              className="rounded-xl bg-slate-700 px-4 py-2 text-sm text-white hover:bg-slate-600"
+              className="rounded-xl bg-gray-700 px-4 py-2 text-sm text-white hover:bg-slate-600"
             >
               Usar valor actual
             </button>
           </div>
         </form>
 
-        <p className="text-sm text-slate-300">
+        <p className="text-sm text-gray-300">
           Link actual: {currentInstagramUrl || 'Sin definir'}
         </p>
       </section>
 
-      <section className="space-y-4 rounded-2xl border border-white/10 bg-slate-900/60 p-5">
+      <section className="space-y-4 rounded-2xl border border-yellow-400/30 bg-gray-900/60 p-5">
         <h2 className="text-xl font-bold uppercase text-white">Crear evento</h2>
         <EventForm
           key={organizerProfile.competitionId}
@@ -393,9 +393,9 @@ export default function OrganizerPage() {
         {!isLoading && error && <p className="rounded-xl bg-rose-900/30 p-4 text-rose-200">{error}</p>}
 
         {!isLoading && !error && (
-          <div className="overflow-x-auto rounded-2xl border border-white/10 bg-slate-900/60">
-            <table className="min-w-full text-left text-sm text-slate-200">
-              <thead className="bg-slate-800/70 text-xs uppercase tracking-wide text-slate-300">
+          <div className="overflow-x-auto rounded-2xl border border-yellow-400/30 bg-gray-900/60">
+            <table className="min-w-full text-left text-sm text-gray-200">
+              <thead className="bg-gray-800/70 text-xs uppercase tracking-wide text-gray-300">
                 <tr>
                   <th className="px-4 py-3">Nombre</th>
                   <th className="px-4 py-3">Fecha</th>
@@ -413,13 +413,13 @@ export default function OrganizerPage() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => setEventEditTarget(event)}
-                          className="rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-sky-500"
+                          className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-sky-500"
                         >
                           Editar
                         </button>
                         <button
                           onClick={() => deleteEventHandler(event.id)}
-                          className="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-500"
+                          className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-yellow-400"
                         >
                           Eliminar
                         </button>
@@ -433,7 +433,7 @@ export default function OrganizerPage() {
         )}
 
         {eventEditTarget && (
-          <section className="space-y-4 rounded-2xl border border-white/10 bg-slate-900/60 p-5">
+          <section className="space-y-4 rounded-2xl border border-yellow-400/30 bg-gray-900/60 p-5">
             <h3 className="text-xl font-bold uppercase text-white">Editar evento</h3>
             <EventForm
               key={eventEditTarget.id}
@@ -442,7 +442,7 @@ export default function OrganizerPage() {
               isSubmitting={isSubmitting}
               competitions={competitionOptions}
             />
-            <button onClick={() => setEventEditTarget(null)} className="rounded-xl bg-slate-700 px-4 py-2 text-white hover:bg-slate-600">
+            <button onClick={() => setEventEditTarget(null)} className="rounded-xl bg-gray-700 px-4 py-2 text-white hover:bg-slate-600">
               Cancelar edicion
             </button>
           </section>

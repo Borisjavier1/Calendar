@@ -35,7 +35,7 @@ export default function EventDetailPage() {
   const competitionLabel = event.competitionName || event.type || 'Competencia'
 
   return (
-    <article className="overflow-hidden rounded-3xl border border-white/10 bg-slate-900/70 shadow-[0_0_35px_rgba(56,189,248,0.18)]">
+    <article className="overflow-hidden rounded-3xl border border-yellow-400/30 bg-gray-900/70 shadow-[0_0_35px_rgba(56,189,248,0.18)]">
       {event.imageUrl ? (
         <div className="flex h-80 w-full items-center justify-center bg-black p-6">
           <img src={event.imageUrl} alt={event.name} className="h-full w-full object-contain" />
@@ -46,9 +46,9 @@ export default function EventDetailPage() {
 
       <div className="space-y-4 p-6 sm:p-8">
         <h1 className="text-3xl font-black uppercase text-white">{event.name}</h1>
-        <p className="inline-block rounded-full bg-rose-500/90 px-4 py-1 text-sm font-semibold text-white">{competitionLabel}</p>
+        <p className="inline-block rounded-full bg-yellow-400/90 px-4 py-1 text-sm font-semibold text-white">{competitionLabel}</p>
 
-        <div className="grid gap-3 text-slate-200 sm:grid-cols-2">
+        <div className="grid gap-3 text-gray-200 sm:grid-cols-2">
           <p><span className="font-semibold text-white">Fecha:</span> {formatEventDate(event.date, event.hasCustomTime)}</p>
           <p><span className="font-semibold text-white">Lugar:</span> {formatLocation(event.place, event.city)}</p>
         </div>
