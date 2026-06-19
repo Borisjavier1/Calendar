@@ -1,5 +1,6 @@
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   onSnapshot,
@@ -57,4 +58,9 @@ export const subscribeToOrganizers = ({ onData, onError }) => {
     },
     onError,
   )
+}
+
+export const deleteOrganizerProfile = async (uid) => {
+  if (!uid) throw new Error('UID del organizador requerido.')
+  await deleteDoc(doc(db, 'organizers', uid))
 }

@@ -17,7 +17,7 @@ import {
   updateCompetition,
 } from '../services/competitionsService'
 import { deleteEvent, updateEvent } from '../services/eventsService'
-import { createOrganizerProfile } from '../services/organizersService'
+import { createOrganizerProfile, deleteOrganizerProfile } from '../services/organizersService'
 import { formatEventDate } from '../utils/date'
 import { formatLocation } from '../utils/location'
 
@@ -228,6 +228,18 @@ export default function AdminPage() {
       setOrganizerStatus(err.message)
     } finally {
       setIsSavingOrganizer(false)
+    }
+  }
+
+  const deleteOrganizerHandler = async (organizerId, organizerUsername) => {
+    const confirmed = window.confirm(`Eliminar organizador "${organizerUsername}"? Esta acción no se puede deshacer.`)
+    if (!confirmed) return
+
+    try {
+      await deleteOrganizerProfile(organizerId)
+      setOrganizerStatus(`Organizador "${organizerUsername}" eliminado correctamente.`)
+    } catch (err) {
+      setOrganizerStatus(`Error al eliminar organizador: ${err.message}`)
     }
   }
 
@@ -498,6 +510,7 @@ export default function AdminPage() {
                   <th className="px-4 py-3">Correo tecnico</th>
                   <th className="px-4 py-3">Competencia</th>
                   <th className="px-4 py-3">Estado</th>
+                  <th className="px-4 py-3">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -507,6 +520,14 @@ export default function AdminPage() {
                     <td className="px-4 py-3">{organizer.email}</td>
                     <td className="px-4 py-3">{organizer.competitionName || '-'}</td>
                     <td className="px-4 py-3">{organizer.isActive ? 'Activo' : 'Inactivo'}</td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => deleteOrganizerHandler(organizer.id, organizer.username)}
+                        className="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-500"
+                      >
+                        Eliminar
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

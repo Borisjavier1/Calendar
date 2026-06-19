@@ -36,7 +36,7 @@ const competitions = [
   },
   {
     name: "Perros de Traba",
-    city: "San Jose",
+    city: "San José",
     imageUrl: "https://via.placeholder.com/400?text=Perros+de+Traba",
   },
   {
@@ -46,12 +46,12 @@ const competitions = [
   },
   {
     name: "Leyendas 420",
-    city: "San Jose",
+    city: "San José",
     imageUrl: "https://via.placeholder.com/400?text=Leyendas+420",
   },
   {
     name: "Ritmoverso",
-    city: "San Jose",
+    city: "San José",
     imageUrl: "https://via.placeholder.com/400?text=Ritmoverso",
   },
   {
@@ -61,7 +61,7 @@ const competitions = [
   },
   {
     name: "Gallos de pelea",
-    city: "San Jose",
+    city: "San José",
     imageUrl: "https://via.placeholder.com/400?text=Gallos+de+pelea",
   },
   {
@@ -71,12 +71,12 @@ const competitions = [
   },
   {
     name: "Elander",
-    city: "San Jose",
+    city: "San José",
     imageUrl: "https://via.placeholder.com/400?text=Elander+1v1",
   },
   {
     name: "Hunter Battles",
-    city: "San Jose",
+    city: "San José",
     imageUrl: "https://via.placeholder.com/400?text=Hunter+Battles",
   },
   {
@@ -91,7 +91,7 @@ const competitions = [
   },
   {
     name: "ZHH",
-    city: "San Jose",
+    city: "San José",
     imageUrl: "https://via.placeholder.com/400?text=ZHH",
   },
   {
