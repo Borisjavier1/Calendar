@@ -2,18 +2,22 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import esLocale from '@fullcalendar/core/locales/es'
-import { getCompetitionColor } from '../utils/constants'
+import { getCompetitionColor, getReadableTextColor } from '../utils/constants'
 
 export default function EventCalendar({ events, onDateSelect }) {
-  const calendarEvents = events.map((event) => ({
-    id: event.id,
-    title: event.name,
-    date: event.date,
-    allDay: true,
-    backgroundColor: event.color || getCompetitionColor(event.competitionId, true),
-    borderColor: 'transparent',
-    textColor: '#ffffff',
-  }))
+  const calendarEvents = events.map((event) => {
+    const eventColor = event.color || getCompetitionColor(event.competitionId, true)
+
+    return {
+      id: event.id,
+      title: event.name,
+      date: event.date,
+      allDay: true,
+      backgroundColor: eventColor,
+      borderColor: 'transparent',
+      textColor: getReadableTextColor(eventColor),
+    }
+  })
 
   return (
     <div className="rounded-2xl border-2 border-yellow-400/30 bg-gray-900/75 p-3 shadow-[0_0_25px_rgba(250,204,21,0.15)] sm:p-4">

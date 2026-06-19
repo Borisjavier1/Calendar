@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
-import { getCompetitionColor } from '../utils/constants'
+import { getCompetitionColor, getReadableTextColor } from '../utils/constants'
 import { formatEventDate } from '../utils/date'
 import { formatLocation } from '../utils/location'
 
 export default function EventCard({ event }) {
   const competitionLabel = event.competitionName || event.type || 'Competencia'
   const typeColor = event.color || getCompetitionColor(event.competitionId, true)
+  const typeTextColor = getReadableTextColor(typeColor)
 
   return (
     <article className="overflow-hidden rounded-2xl border-2 border-yellow-400/30 bg-gray-900/70 shadow-[0_0_20px_rgba(250,204,21,0.1)] transition hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(250,204,21,0.2)]">
@@ -20,7 +21,7 @@ export default function EventCard({ event }) {
       <div className="space-y-3 p-4">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-lg font-bold text-yellow-300">{event.name}</h3>
-          <span className="rounded-full px-3 py-1 text-xs font-bold text-black bg-yellow-400" style={{ backgroundColor: typeColor }}>
+          <span className="rounded-full px-3 py-1 text-xs font-bold" style={{ backgroundColor: typeColor, color: typeTextColor }}>
             {competitionLabel}
           </span>
         </div>

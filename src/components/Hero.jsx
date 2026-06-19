@@ -23,7 +23,7 @@ export default function Hero() {
           Batallas Freestyle CR
         </h1>
         <p className="mt-3 max-w-3xl text-xs text-gray-200 sm:text-sm font-semibold">
-          Publica, descubre y organiza eventos de freestyle. Sin aprobaciones, toda la escena en tiempo real.
+          Publica, descubre y organiza eventos de freestyle/rap. Toda la escena en tiempo real.
         </p>
       </div>
     </section>
