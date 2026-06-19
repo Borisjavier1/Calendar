@@ -174,18 +174,21 @@ export default function AdminPage() {
 
   const deleteCompetitionHandler = async (competitionId) => {
     const linkedEvents = events.filter((event) => event.competitionId === competitionId)
-    if (linkedEvents.length > 0) {
-      setCompetitionStatus('No se puede eliminar una competencia con eventos asociados.')
-      return
-    }
-
-    const confirmed = window.confirm('Se eliminara esta competencia. Deseas continuar?')
+    const eventMessage = linkedEvents.length > 0 
+      ? ` (Se eliminarán también ${linkedEvents.length} evento${linkedEvents.length > 1 ? 's' : ''} asociado${linkedEvents.length > 1 ? 's' : ''})` 
+      : ''
+    
+    const confirmed = window.confirm(`Se eliminará esta competencia${eventMessage}. ¿Deseas continuar?`)
     if (!confirmed) return
 
-    await deleteCompetition(competitionId)
-
-    if (competitionEditTarget?.id === competitionId) {
-      cancelEditCompetition()
+    try {
+      await deleteCompetition(competitionId)
+      setCompetitionStatus('Competencia eliminada correctamente.')
+      if (competitionEditTarget?.id === competitionId) {
+        cancelEditCompetition()
+      }
+    } catch (err) {
+      setCompetitionStatus(`Error al eliminar: ${err.message}`)
     }
   }
 
