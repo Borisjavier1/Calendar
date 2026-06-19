@@ -110,6 +110,31 @@ export const updateCompetitionInstagram = async (competitionId, instagramUrl) =>
 }
 
 export const deleteCompetition = async (competitionId) => {
+  // Primero elimina todos los eventos asociados a esta competencia
+  const linkedEventsQuery = query(eventsCollection, where('competitionId', '==', competitionId))
+  const linkedEventsSnapshot = await getDocs(linkedEventsQuery)
+
+  if (!linkedEventsSnapshot.empty) {
+    let batch = writeBatch(db)
+    let batchCount = 0
+
+    for (const eventDoc of linkedEventsSnapshot.docs) {
+      batch.delete(eventDoc.ref)
+      batchCount += 1
+
+      if (batchCount === 450) {
+        await batch.commit()
+        batch = writeBatch(db)
+        batchCount = 0
+      }
+    }
+
+    if (batchCount > 0) {
+      await batch.commit()
+    }
+  }
+
+  // Luego elimina la competencia
   await deleteDoc(doc(db, 'competitions', competitionId))
 }
 
