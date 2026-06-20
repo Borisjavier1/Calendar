@@ -26,6 +26,8 @@ dist-ssr
 # Local environment and secrets
 .env
 service-account-key.json
+ORGANIZADORES-CREDENCIALES-PRIVADO.md
+ORGANIZADORES-CREDENCIALES-WHATSAPP.txt
 
 # Firebase local cache
 .firebase/

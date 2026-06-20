@@ -14,6 +14,8 @@ import {
 } from 'firebase/firestore'
 import { db } from './firebase'
 import { setCompetitionColorMap } from '../utils/constants'
+import { createOrganizerWithDefaultPassword } from './authService'
+import { createOrganizerProfile } from './organizersService'
 
 const competitionsCollection = collection(db, 'competitions')
 const eventsCollection = collection(db, 'events')
@@ -33,13 +35,47 @@ export const createCompetition = async (payload) => {
     name: payload.name,
     city: payload.city,
     imageUrl: payload.imageUrl,
-    color: payload.color || '#ef4444', // Rojo por defecto
+    color: payload.color || '#ef4444',
     instagramUrl: payload.instagramUrl || '',
     createdAt: serverTimestamp(),
   }
 
   const docRef = await addDoc(competitionsCollection, competitionData)
-  return docRef.id
+  const competitionId = docRef.id
+
+  let organizerAuthAccount = null
+  try {
+    const normalizeForUsername = (value = '') =>
+      value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/ø/gi, 'o')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '')
+
+    const username = normalizeForUsername(payload.name)
+    const email = `${username}@organizador.bfcr.local`
+
+    organizerAuthAccount = await createOrganizerWithDefaultPassword({ username, email })
+
+    await createOrganizerProfile({
+      uid: organizerAuthAccount.uid,
+      username: organizerAuthAccount.username,
+      email: organizerAuthAccount.email,
+      competitionId,
+      competitionName: payload.name,
+    })
+  } catch (organizerError) {
+    await deleteDoc(doc(db, 'competitions', competitionId))
+    throw new Error(
+      `No se pudo crear el organizador automaticamente: ${organizerError?.message || organizerError}`,
+    )
+  }
+
+  return {
+    competitionId,
+    organizer: organizerAuthAccount,
+  }
 }
 
 export const updateCompetition = async (competitionId, payload) => {

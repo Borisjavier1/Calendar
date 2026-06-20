@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 import EventForm from '../components/EventForm'
+import AppModal from '../components/AppModal'
 import ColorPicker from '../components/ColorPicker'
 import LoaderState from '../components/LoaderState'
+import AlertToast from '../components/AlertToast'
 import { useAuth } from '../hooks/useAuth'
 import { useCompetitions } from '../hooks/useCompetitions'
 import { useEvents } from '../hooks/useEvents'
@@ -78,15 +80,20 @@ export default function AdminPage() {
 
   const [eventEditTarget, setEventEditTarget] = useState(null)
   const [isSavingEventEdit, setIsSavingEventEdit] = useState(false)
+  const [eventAlert, setEventAlert] = useState({ message: '', type: 'success' })
 
   const [competitionForm, setCompetitionForm] = useState(initialCompetitionForm)
   const [competitionEditTarget, setCompetitionEditTarget] = useState(null)
   const [isSavingCompetition, setIsSavingCompetition] = useState(false)
-  const [competitionStatus, setCompetitionStatus] = useState('')
+  const [competitionAlert, setCompetitionAlert] = useState({ message: '', type: 'success' })
 
   const [organizerForm, setOrganizerForm] = useState(initialOrganizerForm)
-  const [organizerStatus, setOrganizerStatus] = useState('')
+  const [organizerAlert, setOrganizerAlert] = useState({ message: '', type: 'success' })
   const [isSavingOrganizer, setIsSavingOrganizer] = useState(false)
+
+  const clearEventAlert = () => setEventAlert({ message: '', type: 'success' })
+  const clearCompetitionAlert = () => setCompetitionAlert({ message: '', type: 'success' })
+  const clearOrganizerAlert = () => setOrganizerAlert({ message: '', type: 'success' })
 
   const eventEditDefaults = useMemo(() => {
     if (!eventEditTarget) return undefined
@@ -117,9 +124,14 @@ export default function AdminPage() {
     const confirmed = window.confirm('Esta accion eliminara el evento definitivamente. Continuar?')
     if (!confirmed) return
 
-    await deleteEvent(eventId)
-    if (eventEditTarget?.id === eventId) {
-      setEventEditTarget(null)
+    try {
+      await deleteEvent(eventId)
+      setEventAlert({ message: '✅ Evento eliminado correctamente.', type: 'success' })
+      if (eventEditTarget?.id === eventId) {
+        setEventEditTarget(null)
+      }
+    } catch (err) {
+      setEventAlert({ message: `❌ ${err.message}`, type: 'error' })
     }
   }
 
@@ -129,7 +141,10 @@ export default function AdminPage() {
     try {
       setIsSavingEventEdit(true)
       await updateEvent(eventEditTarget.id, formData)
+      setEventAlert({ message: '✅ Evento actualizado correctamente.', type: 'success' })
       setEventEditTarget(null)
+    } catch (err) {
+      setEventAlert({ message: `❌ ${err.message}`, type: 'error' })
     } finally {
       setIsSavingEventEdit(false)
     }
@@ -139,21 +154,31 @@ export default function AdminPage() {
     event.preventDefault()
 
     try {
-      setCompetitionStatus('')
       setIsSavingCompetition(true)
 
       if (competitionEditTarget) {
         await updateCompetition(competitionEditTarget.id, competitionForm)
-        setCompetitionStatus('Competencia actualizada correctamente.')
+        setCompetitionAlert({ message: '✅ Competencia actualizada correctamente.', type: 'success' })
       } else {
-        await createCompetition(competitionForm)
-        setCompetitionStatus('Competencia creada correctamente.')
+        const result = await createCompetition(competitionForm)
+        
+        if (result.organizer) {
+          setCompetitionAlert({ 
+            message: `✅ Competencia creada. Organizador: usuario: ${result.organizer.username} | contraseña: ${result.organizer.tempPassword}`, 
+            type: 'success' 
+          })
+        } else {
+          setCompetitionAlert({ 
+            message: 'Competencia creada, pero no se pudo crear la cuenta del organizador.', 
+            type: 'warning' 
+          })
+        }
       }
 
       setCompetitionForm(initialCompetitionForm)
       setCompetitionEditTarget(null)
     } catch (err) {
-      setCompetitionStatus(err.message)
+      setCompetitionAlert({ message: `❌ ${err.message}`, type: 'error' })
     } finally {
       setIsSavingCompetition(false)
     }
@@ -178,20 +203,20 @@ export default function AdminPage() {
   const deleteCompetitionHandler = async (competitionId) => {
     const linkedEvents = events.filter((event) => event.competitionId === competitionId)
     const eventMessage = linkedEvents.length > 0 
-      ? ` (Se eliminarÃ¡n tambiÃ©n ${linkedEvents.length} evento${linkedEvents.length > 1 ? 's' : ''} asociado${linkedEvents.length > 1 ? 's' : ''})` 
+      ? ` (Se eliminarán también ${linkedEvents.length} evento${linkedEvents.length > 1 ? 's' : ''} asociado${linkedEvents.length > 1 ? 's' : ''})` 
       : ''
     
-    const confirmed = window.confirm(`Se eliminarÃ¡ esta competencia${eventMessage}. Â¿Deseas continuar?`)
+    const confirmed = window.confirm(`Se eliminará esta competencia${eventMessage}. ¿Deseas continuar?`)
     if (!confirmed) return
 
     try {
       await deleteCompetition(competitionId)
-      setCompetitionStatus('Competencia eliminada correctamente.')
+      setCompetitionAlert({ message: '✅ Competencia eliminada correctamente.', type: 'success' })
       if (competitionEditTarget?.id === competitionId) {
         cancelEditCompetition()
       }
     } catch (err) {
-      setCompetitionStatus(`Error al eliminar: ${err.message}`)
+      setCompetitionAlert({ message: `❌ Error al eliminar: ${err.message}`, type: 'error' })
     }
   }
 
@@ -199,7 +224,6 @@ export default function AdminPage() {
     event.preventDefault()
 
     try {
-      setOrganizerStatus('')
       setIsSavingOrganizer(true)
 
       const normalizedUsername = normalizeUsername(organizerForm.username)
@@ -224,28 +248,28 @@ export default function AdminPage() {
         competitionName: linkedCompetition.name,
       })
 
-      setOrganizerStatus(`Organizador creado: ${authAccount.username}`)
+      setOrganizerAlert({ message: `✅ Organizador creado: ${authAccount.username}`, type: 'success' })
       setOrganizerForm({
         username: '',
         password: '',
         competitionId: organizerForm.competitionId,
       })
     } catch (err) {
-      setOrganizerStatus(err.message)
+      setOrganizerAlert({ message: `❌ ${err.message}`, type: 'error' })
     } finally {
       setIsSavingOrganizer(false)
     }
   }
 
   const deleteOrganizerHandler = async (organizerId, organizerUsername) => {
-    const confirmed = window.confirm(`Eliminar organizador "${organizerUsername}"? Esta acciÃ³n no se puede deshacer.`)
+    const confirmed = window.confirm(`Eliminar organizador "${organizerUsername}"? Esta acción no se puede deshacer.`)
     if (!confirmed) return
 
     try {
       await deleteOrganizerProfile(organizerId)
-      setOrganizerStatus(`Organizador "${organizerUsername}" eliminado correctamente.`)
+      setOrganizerAlert({ message: `✅ Organizador "${organizerUsername}" eliminado correctamente.`, type: 'success' })
     } catch (err) {
-      setOrganizerStatus(`Error al eliminar organizador: ${err.message}`)
+      setOrganizerAlert({ message: `❌ Error al eliminar organizador: ${err.message}`, type: 'error' })
     }
   }
 
@@ -300,6 +324,10 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-8">
+      <AlertToast message={competitionAlert.message} type={competitionAlert.type} onClose={clearCompetitionAlert} />
+      <AlertToast message={organizerAlert.message} type={organizerAlert.type} onClose={clearOrganizerAlert} />
+      <AlertToast message={eventAlert.message} type={eventAlert.type} onClose={clearEventAlert} />
+
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black uppercase text-white">Panel Admin</h1>
@@ -314,9 +342,6 @@ export default function AdminPage() {
       <section className="space-y-4 rounded-2xl border-2 border-yellow-400/30 bg-gray-900/60 p-5 shadow-[0_0_15px_rgba(250,204,21,0.1)]">
         <h2 className="text-xl font-bold uppercase text-yellow-300">Competencias</h2>
 
-        {competitionStatus && (
-          <p className="rounded-xl bg-gray-800 p-3 text-sm text-yellow-200">{competitionStatus}</p>
-        )}
         {competitionsError && (
           <p className="rounded-xl bg-red-900/40 p-3 text-sm text-yellow-200">{competitionsError}</p>
         )}
@@ -449,9 +474,6 @@ export default function AdminPage() {
       <section className="space-y-4 rounded-2xl border-2 border-yellow-400/30 bg-gray-900/60 p-5 shadow-[0_0_15px_rgba(250,204,21,0.1)]">
         <h2 className="text-xl font-bold uppercase text-yellow-300">Organizadores</h2>
 
-        {organizerStatus && (
-          <p className="rounded-xl bg-gray-800 p-3 text-sm text-yellow-200">{organizerStatus}</p>
-        )}
         {organizersError && (
           <p className="rounded-xl bg-red-900/40 p-3 text-sm text-yellow-200">{organizersError}</p>
         )}
@@ -606,9 +628,11 @@ export default function AdminPage() {
           </table>
         </div>
 
-        {eventEditTarget && (
-          <section className="space-y-4 rounded-2xl border-2 border-yellow-400/30 bg-gray-900/60 p-5 shadow-[0_0_15px_rgba(250,204,21,0.1)]">
-            <h3 className="text-xl font-bold uppercase text-yellow-300">Editar evento</h3>
+      </section>
+
+      {eventEditTarget && (
+        <AppModal title="Editar evento" onClose={() => setEventEditTarget(null)} maxWidth="max-w-5xl">
+          <div className="space-y-4">
             <EventForm
               key={eventEditTarget.id}
               defaultValues={eventEditDefaults}
@@ -619,9 +643,9 @@ export default function AdminPage() {
             <button onClick={() => setEventEditTarget(null)} className="rounded-xl border-2 border-yellow-400 bg-transparent px-4 py-2 text-yellow-400 hover:bg-yellow-400/10 font-semibold uppercase tracking-widest">
               Cancelar edicion
             </button>
-          </section>
-        )}
-      </section>
+          </div>
+        </AppModal>
+      )}
     </div>
   )
 }

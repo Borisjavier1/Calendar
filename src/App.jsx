@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Layout from './components/Layout'
 import { useAuth } from './hooks/useAuth'
@@ -8,6 +9,7 @@ import HomePage from './pages/HomePage'
 import NotFoundPage from './pages/NotFoundPage'
 import OrganizerPage from './pages/OrganizerPage'
 import SubmitEventPage from './pages/SubmitEventPage'
+import { trackPageView } from './services/firebase'
 
 function AdminRoute() {
   const { isChecking } = useAuth()
@@ -37,5 +39,21 @@ const router = createBrowserRouter([
 ])
 
 export default function App() {
+  useEffect(() => {
+    if (typeof router.subscribe !== 'function') return undefined
+
+    const unsubscribe = router.subscribe((state) => {
+      const location = state?.location
+      if (!location) return
+
+      const path = `${location.pathname || ''}${location.search || ''}`
+      trackPageView(path).catch(() => {
+        // Ignore analytics tracking failures.
+      })
+    })
+
+    return unsubscribe
+  }, [])
+
   return <RouterProvider router={router} />
 }

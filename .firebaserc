@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "calendario-batallas-33c30"
-  }
+  },
+  "targets": {
+    "calendario-batallas-33c30": {
+      "hosting": {
+        "main": [
+          "calendario-batallas-33c30"
+        ],
+        "batallascr": [
+          "batallascr"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

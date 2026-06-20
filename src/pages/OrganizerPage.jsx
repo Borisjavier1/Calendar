@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import EventForm from '../components/EventForm'
 import LoaderState from '../components/LoaderState'
+import AlertToast from '../components/AlertToast'
+import AppModal from '../components/AppModal'
 import { useAuth } from '../hooks/useAuth'
 import { useCompetitions } from '../hooks/useCompetitions'
 import { useEvents } from '../hooks/useEvents'
@@ -36,7 +38,7 @@ export default function OrganizerPage() {
 
   const [credentials, setCredentials] = useState({ identifier: '', password: '' })
   const [authError, setAuthError] = useState('')
-  const [status, setStatus] = useState({ type: '', message: '' })
+  const [eventAlert, setEventAlert] = useState({ message: '', type: 'success' })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [eventEditTarget, setEventEditTarget] = useState(null)
   const [passwordForm, setPasswordForm] = useState({
@@ -44,11 +46,15 @@ export default function OrganizerPage() {
     newPassword: '',
     confirmPassword: '',
   })
-  const [passwordStatus, setPasswordStatus] = useState({ type: '', message: '' })
+  const [passwordAlert, setPasswordAlert] = useState({ message: '', type: 'success' })
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [instagramUrlInput, setInstagramUrlInput] = useState('')
-  const [instagramStatus, setInstagramStatus] = useState({ type: '', message: '' })
+  const [instagramAlert, setInstagramAlert] = useState({ message: '', type: 'success' })
   const [isSavingInstagram, setIsSavingInstagram] = useState(false)
+
+  const clearEventAlert = () => setEventAlert({ message: '', type: 'success' })
+  const clearPasswordAlert = () => setPasswordAlert({ message: '', type: 'success' })
+  const clearInstagramAlert = () => setInstagramAlert({ message: '', type: 'success' })
 
   const assignedCompetition = useMemo(() => {
     if (!organizerProfile) return null
@@ -106,7 +112,6 @@ export default function OrganizerPage() {
     if (!organizerProfile) return
 
     try {
-      setStatus({ type: '', message: '' })
       setIsSubmitting(true)
 
       await createEvent({
@@ -115,9 +120,9 @@ export default function OrganizerPage() {
       })
 
       resetForm()
-      setStatus({ type: 'success', message: 'Evento creado correctamente.' })
+      setEventAlert({ type: 'success', message: '✅ Evento creado correctamente.' })
     } catch (error) {
-      setStatus({ type: 'error', message: error.message })
+      setEventAlert({ type: 'error', message: `❌ ${error.message}` })
     } finally {
       setIsSubmitting(false)
     }
@@ -127,7 +132,6 @@ export default function OrganizerPage() {
     if (!eventEditTarget || !organizerProfile) return
 
     try {
-      setStatus({ type: '', message: '' })
       setIsSubmitting(true)
 
       await updateEvent(eventEditTarget.id, {
@@ -136,9 +140,9 @@ export default function OrganizerPage() {
       })
 
       setEventEditTarget(null)
-      setStatus({ type: 'success', message: 'Evento actualizado correctamente.' })
+      setEventAlert({ type: 'success', message: '✅ Evento actualizado correctamente.' })
     } catch (error) {
-      setStatus({ type: 'error', message: error.message })
+      setEventAlert({ type: 'error', message: `❌ ${error.message}` })
     } finally {
       setIsSubmitting(false)
     }
@@ -149,16 +153,15 @@ export default function OrganizerPage() {
     if (!confirmed) return
 
     try {
-      setStatus({ type: '', message: '' })
       await deleteEvent(eventId)
 
       if (eventEditTarget?.id === eventId) {
         setEventEditTarget(null)
       }
 
-      setStatus({ type: 'success', message: 'Evento eliminado correctamente.' })
+      setEventAlert({ type: 'success', message: '✅ Evento eliminado correctamente.' })
     } catch (error) {
-      setStatus({ type: 'error', message: 'No se pudo eliminar el evento.' })
+      setEventAlert({ type: 'error', message: `❌ No se pudo eliminar el evento: ${error.message}` })
     }
   }
 
@@ -166,23 +169,22 @@ export default function OrganizerPage() {
     event.preventDefault()
 
     if (passwordForm.newPassword.length < 6) {
-      setPasswordStatus({
+      setPasswordAlert({
         type: 'error',
-        message: 'La nueva clave debe tener al menos 6 caracteres.',
+        message: '❌ La nueva clave debe tener al menos 6 caracteres.',
       })
       return
     }
 
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setPasswordStatus({
+      setPasswordAlert({
         type: 'error',
-        message: 'La confirmacion no coincide con la nueva clave.',
+        message: '❌ La confirmacion no coincide con la nueva clave.',
       })
       return
     }
 
     try {
-      setPasswordStatus({ type: '', message: '' })
       setIsChangingPassword(true)
 
       await changeCurrentUserPassword({
@@ -191,13 +193,13 @@ export default function OrganizerPage() {
       })
 
       setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
-      setPasswordStatus({ type: 'success', message: 'Clave actualizada correctamente.' })
+      setPasswordAlert({ type: 'success', message: '✅ Clave actualizada correctamente.' })
     } catch (error) {
-      setPasswordStatus({
+      setPasswordAlert({
         type: 'error',
         message: error?.code === 'auth/wrong-password'
-          ? 'La clave actual es incorrecta.'
-          : 'No se pudo cambiar la clave. Intenta de nuevo.',
+          ? '❌ La clave actual es incorrecta.'
+          : `❌ No se pudo cambiar la clave: ${error.message}`,
       })
     } finally {
       setIsChangingPassword(false)
@@ -210,14 +212,13 @@ export default function OrganizerPage() {
     if (!organizerProfile) return
 
     try {
-      setInstagramStatus({ type: '', message: '' })
       setIsSavingInstagram(true)
 
       await updateCompetitionInstagram(organizerProfile.competitionId, instagramUrlInput.trim())
 
-      setInstagramStatus({ type: 'success', message: 'Instagram actualizado correctamente.' })
+      setInstagramAlert({ type: 'success', message: '✅ Instagram actualizado correctamente.' })
     } catch (error) {
-      setInstagramStatus({ type: 'error', message: 'No se pudo actualizar el Instagram.' })
+      setInstagramAlert({ type: 'error', message: `❌ No se pudo actualizar el Instagram: ${error.message}` })
     } finally {
       setIsSavingInstagram(false)
     }
@@ -266,6 +267,10 @@ export default function OrganizerPage() {
 
   return (
     <div className="space-y-6">
+      <AlertToast message={eventAlert.message} type={eventAlert.type} onClose={clearEventAlert} />
+      <AlertToast message={passwordAlert.message} type={passwordAlert.type} onClose={clearPasswordAlert} />
+      <AlertToast message={instagramAlert.message} type={instagramAlert.type} onClose={clearInstagramAlert} />
+
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black uppercase text-white">Panel Organizador</h1>
@@ -278,20 +283,8 @@ export default function OrganizerPage() {
         </button>
       </div>
 
-      {status.message && (
-        <p className={status.type === 'success' ? 'rounded-xl bg-emerald-900/30 p-3 text-emerald-200' : 'rounded-xl bg-rose-900/30 p-3 text-rose-200'}>
-          {status.message}
-        </p>
-      )}
-
       <section className="space-y-4 rounded-2xl border border-yellow-400/30 bg-gray-900/60 p-5">
         <h2 className="text-xl font-bold uppercase text-white">Cambiar clave</h2>
-
-        {passwordStatus.message && (
-          <p className={passwordStatus.type === 'success' ? 'rounded-xl bg-emerald-900/30 p-3 text-emerald-200' : 'rounded-xl bg-rose-900/30 p-3 text-rose-200'}>
-            {passwordStatus.message}
-          </p>
-        )}
 
         <form onSubmit={changePasswordHandler} className="grid gap-3 md:grid-cols-3">
           <input
@@ -337,12 +330,6 @@ export default function OrganizerPage() {
 
       <section className="space-y-4 rounded-2xl border border-yellow-400/30 bg-gray-900/60 p-5">
         <h2 className="text-xl font-bold uppercase text-white">Instagram de competencia</h2>
-
-        {instagramStatus.message && (
-          <p className={instagramStatus.type === 'success' ? 'rounded-xl bg-emerald-900/30 p-3 text-emerald-200' : 'rounded-xl bg-rose-900/30 p-3 text-rose-200'}>
-            {instagramStatus.message}
-          </p>
-        )}
 
         <form onSubmit={saveInstagramHandler} className="space-y-3">
           <input
@@ -432,9 +419,11 @@ export default function OrganizerPage() {
           </div>
         )}
 
-        {eventEditTarget && (
-          <section className="space-y-4 rounded-2xl border border-yellow-400/30 bg-gray-900/60 p-5">
-            <h3 className="text-xl font-bold uppercase text-white">Editar evento</h3>
+      </section>
+
+      {eventEditTarget && (
+        <AppModal title="Editar evento" onClose={() => setEventEditTarget(null)} maxWidth="max-w-4xl">
+          <div className="space-y-4">
             <EventForm
               key={eventEditTarget.id}
               defaultValues={eventEditDefaults}
@@ -445,9 +434,9 @@ export default function OrganizerPage() {
             <button onClick={() => setEventEditTarget(null)} className="rounded-xl bg-gray-700 px-4 py-2 text-white hover:bg-slate-600">
               Cancelar edicion
             </button>
-          </section>
-        )}
-      </section>
+          </div>
+        </AppModal>
+      )}
     </div>
   )
 }

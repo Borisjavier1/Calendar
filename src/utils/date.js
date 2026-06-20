@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 export const formatDate = (value, pattern = "dd 'de' MMM yyyy, HH:mm") => {
   if (!value) return ''
@@ -6,11 +7,11 @@ export const formatDate = (value, pattern = "dd 'de' MMM yyyy, HH:mm") => {
   const date = value instanceof Date ? value : new Date(value)
   if (Number.isNaN(date.getTime())) return ''
 
-  return format(date, pattern)
+  return format(date, pattern, { locale: es })
 }
 
 export const formatEventDate = (value, hasCustomTime = false) => {
-  const pattern = hasCustomTime ? "dd 'de' MMM yyyy, HH:mm" : "dd 'de' MMM yyyy"
+  const pattern = hasCustomTime ? "dd 'de' MMM yyyy, h:mm a" : "dd 'de' MMM yyyy"
   return formatDate(value, pattern)
 }
 

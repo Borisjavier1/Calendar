@@ -82,7 +82,49 @@ export const createOrganizerAuthAccount = async ({ username, password }) => {
     }
   } catch (error) {
     if (error?.code === 'auth/email-already-in-use') {
-      throw new Error('Ese usuario ya existe. Prueba con otro nombre.')
+      throw new Error(
+        'Ese usuario ya existe en Firebase Auth. Si lo borraste desde el admin, todavia queda la cuenta de acceso y hay que eliminarla del servidor.',
+      )
+    }
+
+    if (error?.code === 'auth/weak-password') {
+      throw new Error('La clave debe tener al menos 6 caracteres.')
+    }
+
+    throw error
+  } finally {
+    await deleteApp(secondaryApp)
+  }
+}
+
+export const createOrganizerWithDefaultPassword = async ({ username, email }) => {
+  const normalizedUsername = normalizeUsername(username)
+  if (!normalizedUsername) {
+    throw new Error('El usuario debe tener al menos una letra o numero.')
+  }
+
+  const finalEmail = email || organizerEmailFromUsername(normalizedUsername)
+  const tempPassword = `${normalizedUsername}123`
+
+  const secondaryAppName = `auto-organizer-${Date.now()}`
+  const secondaryApp = initializeApp(firebaseConfig, secondaryAppName)
+  const secondaryAuth = getAuth(secondaryApp)
+
+  try {
+    const credential = await createUserWithEmailAndPassword(secondaryAuth, finalEmail, tempPassword)
+    await signOut(secondaryAuth)
+
+    return {
+      uid: credential.user.uid,
+      email: finalEmail,
+      username: normalizedUsername,
+      tempPassword,
+    }
+  } catch (error) {
+    if (error?.code === 'auth/email-already-in-use') {
+      throw new Error(
+        'Ese usuario ya existe en Firebase Auth. Si lo borraste desde el admin, todavia queda la cuenta de acceso y hay que eliminarla del servidor.',
+      )
     }
 
     if (error?.code === 'auth/weak-password') {

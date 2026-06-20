@@ -33,6 +33,9 @@ export default function EventDetailPage() {
   if (!event) return <p className="rounded-xl bg-gray-900/65 p-4 text-gray-300">Evento no encontrado.</p>
 
   const competitionLabel = event.competitionName || event.type || 'Competencia'
+  const description = event.description?.trim()
+  const normalizedDescription = description?.toLowerCase()
+  const shouldShowDescription = Boolean(description && normalizedDescription !== 'fecha')
 
   return (
     <article className="overflow-hidden rounded-3xl border border-yellow-400/30 bg-gray-900/70 shadow-[0_0_35px_rgba(56,189,248,0.18)]">
@@ -49,7 +52,7 @@ export default function EventDetailPage() {
         <p className="inline-block rounded-full bg-yellow-400/90 px-4 py-1 text-sm font-semibold text-white">{competitionLabel}</p>
 
         <div className="grid gap-3 text-gray-200 sm:grid-cols-2">
-          <p><span className="font-semibold text-white">Fecha:</span> {formatEventDate(event.date, event.hasCustomTime)}</p>
+          <p><span className="font-semibold text-white">Cuando:</span> {formatEventDate(event.date, event.hasCustomTime)}</p>
           <p><span className="font-semibold text-white">Lugar:</span> {formatLocation(event.place, event.city)}</p>
         </div>
 
@@ -67,7 +70,7 @@ export default function EventDetailPage() {
           </p>
         )}
 
-        <p className="leading-relaxed text-gray-300">{event.description}</p>
+        {shouldShowDescription && <p className="leading-relaxed text-gray-300">{description}</p>}
       </div>
     </article>
   )

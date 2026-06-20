@@ -5,6 +5,11 @@ import esLocale from '@fullcalendar/core/locales/es'
 import { getCompetitionColor, getReadableTextColor } from '../utils/constants'
 
 export default function EventCalendar({ events, onDateSelect }) {
+  const openDayModal = (date) => {
+    if (!date) return
+    onDateSelect?.(date)
+  }
+
   const calendarEvents = events.map((event) => {
     const eventColor = event.color || getCompetitionColor(event.competitionId, true)
 
@@ -27,8 +32,14 @@ export default function EventCalendar({ events, onDateSelect }) {
         initialView="dayGridMonth"
         events={calendarEvents}
         displayEventTime={false}
+        dateClick={(info) => openDayModal(info?.date)}
+        select={(info) => openDayModal(info?.start)}
         selectable
-        dateClick={(info) => onDateSelect?.(info.date)}
+        longPressDelay={120}
+        selectMinDistance={0}
+        eventClick={(info) => {
+          openDayModal(info?.event?.start)
+        }}
         height="auto"
       />
     </div>
