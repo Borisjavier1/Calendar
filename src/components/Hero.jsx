@@ -20,7 +20,7 @@ export default function Hero() {
           🎤 Escena Urbana Costa Rica
         </p>
         <h1 className="text-3xl font-black uppercase leading-tight text-white sm:text-5xl drop-shadow-lg">
-          Batallas Freestyle CR
+          Batallas de Freestyle CR
         </h1>
         <p className="mt-3 max-w-3xl text-xs text-gray-200 sm:text-sm font-semibold">
           Publica, descubre y organiza eventos de freestyle/rap. Toda la escena en tiempo real.

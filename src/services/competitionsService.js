@@ -178,6 +178,59 @@ export const updateCompetitionInstagram = async (competitionId, instagramUrl) =>
   }
 }
 
+export const updateOrganizerCompetitionSettings = async ({
+  competitionId,
+  organizerUid,
+  name,
+  city,
+  instagramUrl,
+}) => {
+  const trimmedName = (name || '').trim()
+  if (!trimmedName) {
+    throw new Error('El nombre de la competencia es requerido.')
+  }
+
+  const normalizedCity = city?.trim() || ''
+  const normalizedInstagram = instagramUrl?.trim() || ''
+
+  await updateDoc(doc(db, 'competitions', competitionId), {
+    name: trimmedName,
+    city: normalizedCity,
+    instagramUrl: normalizedInstagram,
+  })
+
+  await updateDoc(doc(db, 'organizers', organizerUid), {
+    competitionName: trimmedName,
+  })
+
+  const linkedEventsQuery = query(eventsCollection, where('competitionId', '==', competitionId))
+  const linkedEventsSnapshot = await getDocs(linkedEventsQuery)
+
+  if (linkedEventsSnapshot.empty) return
+
+  let batch = writeBatch(db)
+  let batchCount = 0
+
+  for (const eventDoc of linkedEventsSnapshot.docs) {
+    batch.update(eventDoc.ref, {
+      competitionName: trimmedName,
+      type: trimmedName,
+      competitionInstagramUrl: normalizedInstagram,
+    })
+    batchCount += 1
+
+    if (batchCount === 450) {
+      await batch.commit()
+      batch = writeBatch(db)
+      batchCount = 0
+    }
+  }
+
+  if (batchCount > 0) {
+    await batch.commit()
+  }
+}
+
 export const updateCompetitionColor = async (competitionId, color) => {
   await updateDoc(doc(db, 'competitions', competitionId), {
     color,

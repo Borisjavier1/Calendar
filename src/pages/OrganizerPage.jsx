@@ -11,7 +11,7 @@ import {
   loginPanelUser,
   logoutAdmin,
 } from '../services/authService'
-import { updateCompetitionInstagram } from '../services/competitionsService'
+import { updateOrganizerCompetitionSettings } from '../services/competitionsService'
 import { createEvent, deleteEvent, updateEvent } from '../services/eventsService'
 import { formatEventDate } from '../utils/date'
 import { formatLocation } from '../utils/location'
@@ -49,6 +49,8 @@ export default function OrganizerPage() {
   const [passwordAlert, setPasswordAlert] = useState({ message: '', type: 'success' })
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [instagramUrlInput, setInstagramUrlInput] = useState('')
+  const [competitionNameInput, setCompetitionNameInput] = useState('')
+  const [competitionCityInput, setCompetitionCityInput] = useState('')
   const [instagramAlert, setInstagramAlert] = useState({ message: '', type: 'success' })
   const [isSavingInstagram, setIsSavingInstagram] = useState(false)
 
@@ -76,10 +78,14 @@ export default function OrganizerPage() {
   const currentInstagramUrl = assignedCompetition?.instagramUrl || ''
 
   useEffect(() => {
+    setCompetitionNameInput(assignedCompetition?.name || organizerProfile?.competitionName || '')
+    setCompetitionCityInput(assignedCompetition?.city || '')
     setInstagramUrlInput(currentInstagramUrl)
-  }, [currentInstagramUrl])
+  }, [assignedCompetition, currentInstagramUrl, organizerProfile?.competitionName])
 
   const syncInstagramInput = () => {
+    setCompetitionNameInput(assignedCompetition?.name || organizerProfile?.competitionName || '')
+    setCompetitionCityInput(assignedCompetition?.city || '')
     setInstagramUrlInput(currentInstagramUrl)
   }
 
@@ -94,6 +100,7 @@ export default function OrganizerPage() {
       place: eventEditTarget.place || '',
       competitionId: organizerProfile.competitionId,
       description: eventEditTarget.description,
+      instagramPostUrl: eventEditTarget.eventInstagramUrl || '',
     }
   }, [eventEditTarget, organizerProfile])
 
@@ -214,11 +221,17 @@ export default function OrganizerPage() {
     try {
       setIsSavingInstagram(true)
 
-      await updateCompetitionInstagram(organizerProfile.competitionId, instagramUrlInput.trim())
+      await updateOrganizerCompetitionSettings({
+        competitionId: organizerProfile.competitionId,
+        organizerUid: organizerProfile.id,
+        name: competitionNameInput,
+        city: competitionCityInput,
+        instagramUrl: instagramUrlInput,
+      })
 
-      setInstagramAlert({ type: 'success', message: '✅ Instagram actualizado correctamente.' })
+      setInstagramAlert({ type: 'success', message: '✅ Competencia actualizada correctamente.' })
     } catch (error) {
-      setInstagramAlert({ type: 'error', message: `❌ No se pudo actualizar el Instagram: ${error.message}` })
+      setInstagramAlert({ type: 'error', message: `❌ No se pudo actualizar la competencia: ${error.message}` })
     } finally {
       setIsSavingInstagram(false)
     }
@@ -329,9 +342,26 @@ export default function OrganizerPage() {
       </section>
 
       <section className="space-y-4 rounded-2xl border border-yellow-400/30 bg-gray-900/60 p-5">
-        <h2 className="text-xl font-bold uppercase text-white">Instagram de competencia</h2>
+        <h2 className="text-xl font-bold uppercase text-white">Configuracion de competencia</h2>
 
         <form onSubmit={saveInstagramHandler} className="space-y-3">
+          <input
+            type="text"
+            required
+            value={competitionNameInput}
+            onChange={(event) => setCompetitionNameInput(event.target.value)}
+            placeholder="Nombre de la competencia"
+            className="w-full rounded-xl border border-yellow-400/30 bg-gray-800 px-3 py-2 text-gray-100"
+          />
+
+          <input
+            type="text"
+            value={competitionCityInput}
+            onChange={(event) => setCompetitionCityInput(event.target.value)}
+            placeholder="Sede principal (ciudad)"
+            className="w-full rounded-xl border border-yellow-400/30 bg-gray-800 px-3 py-2 text-gray-100"
+          />
+
           <input
             type="url"
             value={instagramUrlInput}
@@ -346,7 +376,7 @@ export default function OrganizerPage() {
               disabled={isSavingInstagram}
               className="rounded-xl bg-yellow-400 px-4 py-2 text-sm font-semibold text-white hover:bg-yellow-300 disabled:bg-yellow-300/50"
             >
-              {isSavingInstagram ? 'Guardando...' : 'Guardar instagram'}
+              {isSavingInstagram ? 'Guardando...' : 'Guardar cambios'}
             </button>
             <button
               type="button"
@@ -358,9 +388,7 @@ export default function OrganizerPage() {
           </div>
         </form>
 
-        <p className="text-sm text-gray-300">
-          Link actual: {currentInstagramUrl || 'Sin definir'}
-        </p>
+        <p className="text-sm text-gray-300">Instagram actual: {currentInstagramUrl || 'Sin definir'}</p>
       </section>
 
       <section className="space-y-4 rounded-2xl border border-yellow-400/30 bg-gray-900/60 p-5">

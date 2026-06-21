@@ -14,7 +14,7 @@ export default function Layout() {
         <header className="mb-8 rounded-2xl border-2 border-yellow-400/30 bg-gray-900/80 px-5 py-4 backdrop-blur-md shadow-[0_0_25px_rgba(250,204,21,0.1)]">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <Link to="/" className="text-lg font-black tracking-widest text-yellow-300 uppercase drop-shadow-lg">
-              🎤 Batallas Freestyle CR
+              🎤 Batallas de Freestyle CR
             </Link>
 
             <nav className="flex flex-wrap gap-2 text-sm font-bold uppercase">
@@ -41,6 +41,22 @@ export default function Layout() {
         <main>
           <Outlet />
         </main>
+
+        <footer className="mt-10 rounded-2xl border border-yellow-400/30 bg-gray-900/70 px-5 py-4 text-sm text-gray-300">
+          <p className="font-semibold text-yellow-300 uppercase tracking-wider">Soporte</p>
+          <p className="mt-1">
+            Si necesitas soprte con la web, escribe a{' '}
+            <a
+              href="https://www.instagram.com/borisjavier_1"
+              target="_blank"
+              rel="noreferrer"
+              className="font-bold text-fuchsia-300 hover:text-fuchsia-200"
+            >
+              @borisjavier_1
+            </a>
+            .
+          </p>
+        </footer>
       </div>
     </div>
   )

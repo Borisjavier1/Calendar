@@ -35,15 +35,11 @@ service cloud.firestore {
       allow read: if true;
       allow create: if isAdmin()
         || (isOrganizer()
-          && request.resource.data.competitionId == organizerCompetitionId()
-          && request.resource.data.competitionName == organizerCompetitionName()
-          && request.resource.data.type == organizerCompetitionName());
+          && request.resource.data.competitionId == organizerCompetitionId());
       allow update: if isAdmin()
         || (isOrganizer()
           && resource.data.competitionId == organizerCompetitionId()
-          && request.resource.data.competitionId == organizerCompetitionId()
-          && request.resource.data.competitionName == organizerCompetitionName()
-          && request.resource.data.type == organizerCompetitionName());
+          && request.resource.data.competitionId == organizerCompetitionId());
       allow delete: if isAdmin()
         || (isOrganizer() && resource.data.competitionId == organizerCompetitionId());
     }
@@ -54,16 +50,20 @@ service cloud.firestore {
       allow update: if isAdmin()
         || (isOrganizer()
           && competitionId == organizerCompetitionId()
-          && request.resource.data.keys().hasOnly(['name', 'city', 'imageUrl', 'instagramUrl', 'createdAt'])
-          && request.resource.data.name == resource.data.name
-          && request.resource.data.city == resource.data.city
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly(['name', 'city', 'instagramUrl'])
           && request.resource.data.imageUrl == resource.data.imageUrl
+          && request.resource.data.color == resource.data.color
           && request.resource.data.createdAt == resource.data.createdAt);
     }
 
     match /organizers/{organizerId} {
       allow read: if isAdmin() || (isSignedIn() && request.auth.uid == organizerId);
-      allow create, update, delete: if isAdmin();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (isSignedIn()
+          && request.auth.uid == organizerId
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly(['competitionName'])
+          && request.resource.data.competitionId == resource.data.competitionId);
     }
   }
 }

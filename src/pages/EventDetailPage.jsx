@@ -5,6 +5,40 @@ import { getEventById } from '../services/eventsService'
 import { formatEventDate } from '../utils/date'
 import { formatLocation } from '../utils/location'
 
+const getInstagramEmbedUrl = (value = '') => {
+  try {
+    const url = new URL(value)
+    if (!url.hostname.includes('instagram.com')) return ''
+
+    const cleanedPath = url.pathname.replace(/\/+$/, '')
+    const match = cleanedPath.match(/(?:^|\/)\b(p|reel|tv)\/([^/?#]+)/)
+    if (!match) return ''
+
+    const [, type, code] = match
+    return `https://www.instagram.com/${type}/${code}/embed`
+  } catch {
+    return ''
+  }
+}
+
+const getDirectImageUrl = (value = '') => {
+  if (!value) return ''
+
+  try {
+    const url = new URL(value)
+    const pathname = url.pathname.toLowerCase()
+    const isImagePath = /\.(jpg|jpeg|png|webp|gif)(\?|$)/.test(pathname)
+    const isInstagramCdn =
+      url.hostname.includes('cdninstagram.com') ||
+      url.hostname.includes('fbcdn.net') ||
+      url.hostname.includes('instagram.f')
+
+    return isImagePath || isInstagramCdn ? value : ''
+  } catch {
+    return ''
+  }
+}
+
 export default function EventDetailPage() {
   const { id } = useParams()
   const [event, setEvent] = useState(null)
@@ -36,6 +70,9 @@ export default function EventDetailPage() {
   const description = event.description?.trim()
   const normalizedDescription = description?.toLowerCase()
   const shouldShowDescription = Boolean(description && normalizedDescription !== 'fecha')
+  const eventInstagramUrl = event.eventInstagramUrl?.trim() || ''
+  const directImageUrl = getDirectImageUrl(eventInstagramUrl)
+  const instagramEmbedUrl = getInstagramEmbedUrl(eventInstagramUrl)
 
   return (
     <article className="overflow-hidden rounded-3xl border border-yellow-400/30 bg-gray-900/70 shadow-[0_0_35px_rgba(56,189,248,0.18)]">
@@ -68,6 +105,40 @@ export default function EventDetailPage() {
               Abrir perfil
             </a>
           </p>
+        )}
+
+        {eventInstagramUrl && (
+          <div className="space-y-2">
+            <p className="font-semibold text-white">Flyer del evento:</p>
+
+            {directImageUrl && (
+              <div className="overflow-hidden rounded-xl border border-yellow-400/20 bg-black/30 p-2">
+                <img src={directImageUrl} alt={`Flyer ${event.name}`} className="max-h-[640px] w-full object-contain" />
+              </div>
+            )}
+
+            {!directImageUrl && instagramEmbedUrl && (
+              <div className="overflow-hidden rounded-xl border border-yellow-400/20 bg-black/30">
+                <iframe
+                  title={`Instagram ${event.name}`}
+                  src={instagramEmbedUrl}
+                  className="h-[540px] w-full"
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                />
+              </div>
+            )}
+
+            {!directImageUrl && !instagramEmbedUrl && (
+              <a
+                href={eventInstagramUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-fuchsia-300 hover:text-fuchsia-200"
+              >
+                Abrir en Instagram
+              </a>
+            )}
+          </div>
         )}
 
         {shouldShowDescription && <p className="leading-relaxed text-gray-300">{description}</p>}

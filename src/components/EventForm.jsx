@@ -8,6 +8,7 @@ const initialState = {
   place: '',
   competitionId: '',
   description: '',
+  instagramPostUrl: '',
 }
 
 export default function EventForm({ onSubmit, isSubmitting, defaultValues, competitions = [] }) {
@@ -80,6 +81,17 @@ export default function EventForm({ onSubmit, isSubmitting, defaultValues, compe
         <label className="space-y-2 sm:col-span-2">
           <span className="text-sm text-slate-200">Descripcion</span>
           <textarea required value={form.description} onChange={updateField('description')} rows={5} className="w-full rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100 outline-none focus:border-rose-400" />
+        </label>
+
+        <label className="space-y-2 sm:col-span-2">
+          <span className="text-sm text-slate-200">Link de Instagram del flyer (opcional)</span>
+          <input
+            type="url"
+            value={form.instagramPostUrl}
+            onChange={updateField('instagramPostUrl')}
+            placeholder="https://www.instagram.com/p/XXXXXXXX/"
+            className="w-full rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-slate-100 outline-none focus:border-rose-400"
+          />
         </label>
       </div>
 

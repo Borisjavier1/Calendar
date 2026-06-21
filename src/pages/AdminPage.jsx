@@ -106,6 +106,7 @@ export default function AdminPage() {
       place: eventEditTarget.place || '',
       competitionId: eventEditTarget.competitionId || competitions[0]?.id || '',
       description: eventEditTarget.description,
+      instagramPostUrl: eventEditTarget.eventInstagramUrl || '',
     }
   }, [eventEditTarget, competitions])
 
